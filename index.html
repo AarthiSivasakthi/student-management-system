@@ -1,0 +1,1550 @@
+DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Student Complaint Management System"
+    >
+
+    <title>StudentCare | Complaint Management System</title>
+
+    <link rel="stylesheet" href="style.css">
+
+
+    <!-- Added: persistent tracking + resolved feedback styles -->
+    <style>
+        .resolved-feedback-box {
+            max-width: 760px;
+            margin: 24px auto 0;
+            padding: 22px;
+            border: 1px solid rgba(128, 128, 128, 0.28);
+            border-radius: 16px;
+        }
+
+        .resolved-feedback-box.hidden {
+            display: none;
+        }
+
+        .resolved-feedback-box h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .resolved-feedback-box p {
+            margin-top: 0;
+        }
+
+        .resolved-feedback-box .feedback-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .resolved-feedback-box input,
+        .resolved-feedback-box textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .resolved-feedback-message {
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+    <header class="header">
+
+        <a href="#home" class="logo">
+            <span class="logo-icon">🎓</span>
+            <span>StudentCare</span>
+        </a>
+
+        <button
+            class="menu-btn"
+            id="menuBtn"
+            type="button"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+        >
+            ☰
+        </button>
+
+        <nav id="mainNav">
+            <a href="#home">Home</a>
+            <a href="#complaint">Submit Complaint</a>
+            <a href="#track">Track Complaint</a>
+            <a href="#about">About</a>
+        </nav>
+
+        <div class="auth-buttons" id="authButtons">
+
+            <button
+                type="button"
+                class="login-btn"
+                id="openLogin"
+            >
+                Login
+            </button>
+
+            <button
+                type="button"
+                class="signup-btn"
+                id="openSignup"
+            >
+                Sign Up
+            </button>
+
+        </div>
+
+        <div
+            class="user-area hidden"
+            id="userArea"
+        >
+            <span id="welcomeUser"></span>
+
+            <button
+                type="button"
+                id="logoutBtn"
+                class="logout-btn"
+            >
+                Logout
+            </button>
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <!-- =========================
+             HERO
+        ========================== -->
+        <section id="home" class="hero">
+
+            <div class="hero-glow glow-one"></div>
+            <div class="hero-glow glow-two"></div>
+
+            <div class="hero-content">
+
+                <span class="hero-badge">
+                    Student Support Portal
+                </span>
+
+                <h1>
+                    Student Complaint
+                    <span>Management System</span>
+                </h1>
+
+                <p>
+                    A secure and simple platform for students
+                    to submit complaints, monitor their status
+                    and communicate concerns efficiently.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="#complaint"
+                        class="primary-btn"
+                    >
+                        Submit a Complaint
+                    </a>
+
+                    <a
+                        href="#track"
+                        class="secondary-btn"
+                    >
+                        Track Complaint
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="hero-card">
+
+                <div class="hero-card-icon">
+                    🛡️
+                </div>
+
+                <h3>Your Voice Matters</h3>
+
+                <p>
+                    Submit your concerns through a centralized
+                    and transparent complaint management system.
+                </p>
+
+                <div class="security-line">
+                    <span>✓</span>
+                    Easy complaint submission
+                </div>
+
+                <div class="security-line">
+                    <span>✓</span>
+                    Complaint tracking
+                </div>
+
+                <div class="security-line">
+                    <span>✓</span>
+                    Secure account access
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             STATISTICS
+        ========================== -->
+        <section class="stats">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📋
+                </div>
+
+                <div>
+                    <h2 id="totalComplaints">
+                        0
+                    </h2>
+
+                    <p>Total Complaints</p>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <div>
+                    <h2 id="pendingComplaints">
+                        0
+                    </h2>
+
+                    <p>Pending</p>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <div>
+                    <h2 id="resolvedComplaints">
+                        0
+                    </h2>
+
+                    <p>Resolved</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             COMPLAINT FORM
+        ========================== -->
+        <section
+            id="complaint"
+            class="section"
+        >
+
+            <div class="section-heading">
+
+                <span class="section-tag">
+                    Raise a Concern
+                </span>
+
+                <h2>
+                    Submit Your Complaint
+                </h2>
+
+                <p>
+                    Enter the required information carefully.
+                    Fields will be automatically validated
+                    before submission.
+                </p>
+
+            </div>
+
+
+            <div class="form-container">
+
+                <form
+                    id="complaintForm"
+                    novalidate
+                >
+
+                    <!-- Student Name -->
+                    <div class="form-group">
+
+                        <label for="studentName">
+                            Student Name
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="studentName"
+                            maxlength="14"
+                            autocomplete="name"
+                            placeholder="Example: Aarthi"
+                            required
+                        >
+
+                        <div class="field-info">
+                            Letters only • Maximum 14 characters •
+                            First letter must be capital.
+                        </div>
+
+                        <small
+                            class="error-message"
+                            id="studentNameError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Register Number -->
+                    <div class="form-group">
+
+                        <label for="registerNumber">
+                            Registration Number
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            inputmode="numeric"
+                            id="registerNumber"
+                            maxlength="17"
+                            placeholder="17 digit registration number"
+                            required
+                        >
+
+                        <div class="field-info">
+                            Numbers only • Exactly 17 digits.
+                        </div>
+
+                        <small
+                            class="error-message"
+                            id="registerNumberError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Department -->
+                    <div class="form-group">
+
+                        <label for="department">
+                            Department
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="department"
+                            required
+                        >
+
+                            <option value="">
+                                Select Department
+                            </option>
+
+                            <option value="Computer Science">
+                                Computer Science
+                            </option>
+
+                            <option value="Information Technology">
+                                Information Technology
+                            </option>
+
+                            <option value="Computer Application">
+                                Computer Application
+                            </option>
+
+                            <option value="Regional Languages">
+                                Regional Languages
+                            </option>
+
+                            <option value="English">
+                                English
+                            </option>
+
+                            <option value="History">
+                                History
+                            </option>
+
+                            <option value="Economics">
+                                Economics
+                            </option>
+
+                            <option value="Political Science">
+                                Political Science
+                            </option>
+
+                            <option value="Sociology">
+                                Sociology
+                            </option>
+
+                            <option value="Mathematics">
+                                Mathematics
+                            </option>
+
+                            <option value="Physics">
+                                Physics
+                            </option>
+
+                            <option value="Chemistry">
+                                Chemistry
+                            </option>
+
+                            <option value="Botany">
+                                Botany
+                            </option>
+
+                            <option value="Zoology">
+                                Zoology
+                            </option>
+
+                            <option value="Commerce General">
+                                Commerce - General
+                            </option>
+
+                            <option value="Commerce Accounting Finance">
+                                Commerce - Accounting / Finance
+                            </option>
+
+                            <option value="Business Administration">
+                                Business Administration
+                            </option>
+
+                        </select>
+
+                        <small
+                            class="error-message"
+                            id="departmentError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Regional Language -->
+                    <div
+                        class="form-group hidden"
+                        id="languageGroup"
+                    >
+
+                        <label for="regionalLanguage">
+                            Regional Language
+                            <span>*</span>
+                        </label>
+
+                        <select id="regionalLanguage">
+
+                            <option value="">
+                                Select Language
+                            </option>
+
+                            <option value="Tamil">
+                                Tamil
+                            </option>
+
+                            <option value="Telugu">
+                                Telugu
+                            </option>
+
+                            <option value="Malayalam">
+                                Malayalam
+                            </option>
+
+                            <option value="Kannada">
+                                Kannada
+                            </option>
+
+                            <option value="Hindi">
+                                Hindi
+                            </option>
+
+                            <option value="Urdu">
+                                Urdu
+                            </option>
+
+                            <option value="Sanskrit">
+                                Sanskrit
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                        <small
+                            class="error-message"
+                            id="regionalLanguageError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Custom Language -->
+                    <div
+                        class="form-group hidden"
+                        id="customLanguageGroup"
+                    >
+
+                        <label for="customLanguage">
+                            Enter Exact Language
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customLanguage"
+                            maxlength="30"
+                            placeholder="Enter language name"
+                        >
+
+                        <small
+                            class="error-message"
+                            id="customLanguageError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Complaint Category -->
+                    <div class="form-group">
+
+                        <label for="category">
+                            Complaint Category
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="category"
+                            required
+                        >
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="Academic">
+                                Academic
+                            </option>
+
+                            <option value="Infrastructure">
+                                Infrastructure
+                            </option>
+
+                            <option value="Hostel">
+                                Hostel
+                            </option>
+
+                            <option value="Transport">
+                                Transport
+                            </option>
+
+                            <option value="Library">
+                                Library
+                            </option>
+
+                            <option value="Examination">
+                                Examination
+                            </option>
+
+                            <option value="Fees">
+                                Fees
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                        <small
+                            class="error-message"
+                            id="categoryError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="form-group full-width">
+
+                        <div class="label-row">
+
+                            <label for="description">
+                                Complaint Description
+                                <span>*</span>
+                            </label>
+
+                            <span
+                                id="descriptionCounter"
+                                class="counter"
+                            >
+                                0/500
+                            </span>
+
+                        </div>
+
+                        <textarea
+                            id="description"
+                            rows="7"
+                            maxlength="500"
+                            placeholder="Describe your complaint clearly..."
+                            required
+                        ></textarea>
+
+                        <div class="field-info">
+                            Maximum 500 characters. Letters and
+                            numbers are allowed. Maximum 2 symbol
+                            characters.
+                        </div>
+
+                        <small
+                            class="error-message"
+                            id="descriptionError"
+                        ></small>
+
+                    </div>
+
+
+                    <div class="submit-area full-width">
+
+                        <button
+                            type="submit"
+                            class="primary-btn submit-btn"
+                        >
+                            <span>
+                                Submit Complaint
+                            </span>
+
+                            <span>
+                                ➜
+                            </span>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             TRACK COMPLAINT
+        ========================== -->
+        <section
+            id="track"
+            class="section track-section"
+        >
+
+            <div class="section-heading">
+
+                <span class="section-tag">
+                    Complaint Status
+                </span>
+
+                <h2>
+                    Track Your Complaint
+                </h2>
+
+                <p>
+                    Enter the complaint ID received after
+                    successful submission.
+                </p>
+
+            </div>
+
+
+            <div class="track-box">
+
+                <input
+                    type="text"
+                    id="complaintId"
+                    placeholder="Example: CMP123456"
+                    aria-label="Complaint ID"
+                >
+
+                <button
+                    type="button"
+                    id="trackButton"
+                    class="primary-btn"
+                >
+                    Track Complaint
+                </button>
+
+            </div>
+
+
+            <div id="trackResult"></div>
+
+
+
+            <!-- Added: feedback is available only for resolved complaints -->
+            <div id="resolvedFeedbackBox" class="resolved-feedback-box hidden">
+                <h3>Resolved Complaint Feedback</h3>
+                <p>If your problem has been solved, enter your complaint ID and share your feedback.</p>
+
+                <form id="resolvedFeedbackForm" novalidate>
+                    <div class="feedback-grid">
+                        <div class="form-group">
+                            <label for="feedbackComplaintId">Complaint ID <span>*</span></label>
+                            <input
+                                type="text"
+                                id="feedbackComplaintId"
+                                placeholder="Example: CMP123456"
+                                autocomplete="off"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="resolvedFeedback">Your Feedback <span>*</span></label>
+                            <textarea
+                                id="resolvedFeedback"
+                                rows="5"
+                                maxlength="300"
+                                placeholder="Type your feedback using letters only"
+                                required
+                            ></textarea>
+                            <div class="field-info">Letters and spaces only • Maximum 300 characters.</div>
+                        </div>
+
+                        <button type="submit" class="primary-btn">Submit Feedback</button>
+                    </div>
+                </form>
+
+                <div id="resolvedFeedbackMessage" class="resolved-feedback-message" aria-live="polite"></div>
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             RECENT COMPLAINTS
+        ========================== -->
+        <section class="section">
+
+            <div class="section-heading">
+
+                <span class="section-tag">
+                    Activity
+                </span>
+
+                <h2>
+                    Recent Complaints
+                </h2>
+
+            </div>
+
+            <div id="complaintList">
+
+                <div class="empty-state">
+
+                    <div>📭</div>
+
+                    <h3>
+                        No complaints submitted
+                    </h3>
+
+                    <p>
+                        New complaints will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             ABOUT
+        ========================== -->
+        <section
+            id="about"
+            class="about section"
+        >
+
+            <div class="section-heading">
+
+                <span class="section-tag">
+                    StudentCare
+                </span>
+
+                <h2>
+                    About the System
+                </h2>
+
+                <p>
+                    StudentCare provides a centralized
+                    platform for submitting, managing and
+                    tracking student complaints.
+                </p>
+
+            </div>
+
+
+            <div class="features">
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">
+                        📝
+                    </div>
+
+                    <h3>
+                        Easy Submission
+                    </h3>
+
+                    <p>
+                        Students can submit categorized
+                        complaints from any device.
+                    </p>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">
+                        🔍
+                    </div>
+
+                    <h3>
+                        Complaint Tracking
+                    </h3>
+
+                    <p>
+                        Use the unique complaint ID to monitor
+                        complaint status.
+                    </p>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">
+                        ⚡
+                    </div>
+
+                    <h3>
+                        Faster Response
+                    </h3>
+
+                    <p>
+                        Organized complaint data makes
+                        resolution easier and faster.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         LOGIN MODAL
+    ========================== -->
+    <div
+        class="modal hidden"
+        id="loginModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="loginTitle"
+    >
+
+        <div class="modal-content">
+
+            <button
+                type="button"
+                class="close-modal"
+                data-close="loginModal"
+                aria-label="Close login"
+            >
+                ×
+            </button>
+
+            <div class="modal-icon">
+                🎓
+            </div>
+
+            <h2 id="loginTitle">
+                Welcome Back
+            </h2>
+
+            <p class="modal-description">
+                Sign in to your StudentCare account.
+            </p>
+
+
+            <form
+                id="loginForm"
+                novalidate
+            >
+
+                <div class="form-group">
+
+                    <label for="loginEmail">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        autocomplete="email"
+                        placeholder="student@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="loginPassword">
+                        Password
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            autocomplete="current-password"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="loginPassword"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <small
+                    class="error-message"
+                    id="loginError"
+                ></small>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn auth-submit"
+                >
+                    Login
+                </button>
+
+            </form>
+
+
+            <p class="switch-auth">
+                Don't have an account?
+
+                <button
+                    type="button"
+                    id="switchToSignup"
+                >
+                    Create account
+                </button>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SIGNUP MODAL
+    ========================== -->
+    <div
+        class="modal hidden"
+        id="signupModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="signupTitle"
+    >
+
+        <div class="modal-content">
+
+            <button
+                type="button"
+                class="close-modal"
+                data-close="signupModal"
+                aria-label="Close signup"
+            >
+                ×
+            </button>
+
+            <div class="modal-icon">
+                👤
+            </div>
+
+            <h2 id="signupTitle">
+                Create Account
+            </h2>
+
+            <p class="modal-description">
+                Register to access StudentCare.
+            </p>
+
+
+            <form
+                id="signupForm"
+                novalidate
+            >
+
+                <div class="form-group">
+
+                    <label for="signupName">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="signupName"
+                        maxlength="50"
+                        autocomplete="name"
+                        placeholder="Enter your full name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="signupEmail">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="signupEmail"
+                        autocomplete="email"
+                        placeholder="student@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="signupPassword">
+                        Password
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="signupPassword"
+                            autocomplete="new-password"
+                            placeholder="Create password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="signupPassword"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                    <div class="password-rules">
+
+                        <span id="ruleLength">
+                            ○ Minimum 8 characters
+                        </span>
+
+                        <span id="ruleUpper">
+                            ○ One uppercase letter
+                        </span>
+
+                        <span id="ruleLower">
+                            ○ One lowercase letter
+                        </span>
+
+                        <span id="ruleNumber">
+                            ○ One number
+                        </span>
+
+                        <span id="ruleSymbol">
+                            ○ One special character
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="confirmPassword">
+                        Confirm Password
+                    </label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            autocomplete="new-password"
+                            placeholder="Confirm password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="confirmPassword"
+                            aria-label="Show password"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <small
+                    class="error-message"
+                    id="signupError"
+                ></small>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn auth-submit"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <p class="switch-auth">
+                Already have an account?
+
+                <button
+                    type="button"
+                    id="switchToLogin"
+                >
+                    Login
+                </button>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         TOAST NOTIFICATION
+    ========================== -->
+    <div
+        class="toast"
+        id="toast"
+        role="status"
+        aria-live="polite"
+    >
+        <span id="toastIcon">✓</span>
+        <span id="toastMessage"></span>
+    </div>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+    <footer>
+
+        <div class="footer-logo">
+            🎓 StudentCare
+        </div>
+
+        <p>
+            © 2026 StudentCare |
+            Student Complaint Management System
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+\n\n    <!-- Added: persistent complaint tracking + resolved feedback -->
+    <script>
+    (function () {
+        'use strict';
+
+        const STORAGE_KEY = 'studentcarePersistentComplaints';
+        const FEEDBACK_KEY = 'studentcareResolvedFeedback';
+        const ID_PATTERN = /\\bCMP[A-Z0-9-]{3,}\\b/i;
+
+        const complaintForm = document.getElementById('complaintForm');
+        const complaintIdInput = document.getElementById('complaintId');
+        const trackButton = document.getElementById('trackButton');
+        const trackResult = document.getElementById('trackResult');
+        const feedbackBox = document.getElementById('resolvedFeedbackBox');
+        const feedbackForm = document.getElementById('resolvedFeedbackForm');
+        const feedbackComplaintId = document.getElementById('feedbackComplaintId');
+        const resolvedFeedback = document.getElementById('resolvedFeedback');
+        const feedbackMessage = document.getElementById('resolvedFeedbackMessage');
+
+        let pendingSubmission = null;
+
+        function readJson(key, fallback) {
+            try {
+                const value = JSON.parse(localStorage.getItem(key));
+                return value ?? fallback;
+            } catch (_) {
+                return fallback;
+            }
+        }
+
+        function getPersistentComplaints() {
+            const value = readJson(STORAGE_KEY, []);
+            return Array.isArray(value) ? value : [];
+        }
+
+        function savePersistentComplaints(items) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+
+        function normalizeId(value) {
+            return String(value || '').trim().toUpperCase();
+        }
+
+        function normalizeStatus(value) {
+            const status = String(value || 'Pending').trim();
+            return status || 'Pending';
+        }
+
+        function getCandidateId(obj) {
+            if (!obj || typeof obj !== 'object') return '';
+            return normalizeId(
+                obj.complaintId || obj.complaintID || obj.id || obj.complaint_id || obj.ticketId || obj.ticketID
+            );
+        }
+
+        function getCandidateStatus(obj) {
+            if (!obj || typeof obj !== 'object') return 'Pending';
+            return normalizeStatus(obj.status || obj.complaintStatus || obj.state);
+        }
+
+        function findByIdDeep(value, wantedId, seen) {
+            if (!value || typeof value !== 'object') return null;
+            if (seen.has(value)) return null;
+            seen.add(value);
+
+            if (getCandidateId(value) === wantedId) return value;
+
+            if (Array.isArray(value)) {
+                for (const item of value) {
+                    const found = findByIdDeep(item, wantedId, seen);
+                    if (found) return found;
+                }
+                return null;
+            }
+
+            for (const item of Object.values(value)) {
+                const found = findByIdDeep(item, wantedId, seen);
+                if (found) return found;
+            }
+            return null;
+        }
+
+        function findComplaintAnywhere(id) {
+            const wantedId = normalizeId(id);
+            if (!wantedId) return null;
+
+            const own = getPersistentComplaints().find(item => normalizeId(item.id) === wantedId);
+            if (own) return { ...own, id: wantedId, status: normalizeStatus(own.status) };
+
+            // Compatibility: also check complaint data saved by the existing script.js,
+            // even if it uses a different localStorage key/object structure.
+            for (let i = 0; i < localStorage.length; i += 1) {
+                const key = localStorage.key(i);
+                if (!key || key === STORAGE_KEY || key === FEEDBACK_KEY) continue;
+
+                try {
+                    const parsed = JSON.parse(localStorage.getItem(key));
+                    const found = findByIdDeep(parsed, wantedId, new WeakSet());
+                    if (found) {
+                        return {
+                            id: wantedId,
+                            name: found.studentName || found.name || '',
+                            registerNumber: found.registerNumber || found.registrationNumber || '',
+                            department: found.department || '',
+                            category: found.category || '',
+                            description: found.description || found.complaint || '',
+                            status: getCandidateStatus(found),
+                            submittedAt: found.submittedAt || found.createdAt || found.date || ''
+                        };
+                    }
+                } catch (_) {
+                    // Ignore unrelated non-JSON localStorage entries.
+                }
+            }
+
+            return null;
+        }
+
+        function upsertComplaint(record) {
+            if (!record || !record.id) return;
+            const id = normalizeId(record.id);
+            const items = getPersistentComplaints();
+            const index = items.findIndex(item => normalizeId(item.id) === id);
+            const next = {
+                ...(index >= 0 ? items[index] : {}),
+                ...record,
+                id,
+                status: normalizeStatus(record.status || (index >= 0 ? items[index].status : 'Pending'))
+            };
+
+            if (index >= 0) items[index] = next;
+            else items.unshift(next);
+            savePersistentComplaints(items);
+        }
+
+        function snapshotComplaintForm() {
+            if (!complaintForm) return null;
+            return {
+                name: document.getElementById('studentName')?.value.trim() || '',
+                registerNumber: document.getElementById('registerNumber')?.value.trim() || '',
+                department: document.getElementById('department')?.value || '',
+                regionalLanguage: document.getElementById('regionalLanguage')?.value || '',
+                customLanguage: document.getElementById('customLanguage')?.value.trim() || '',
+                category: document.getElementById('category')?.value || '',
+                description: document.getElementById('description')?.value.trim() || '',
+                submittedAt: new Date().toISOString()
+            };
+        }
+
+        function captureGeneratedComplaintId(text) {
+            if (!pendingSubmission) return;
+            const match = String(text || '').match(ID_PATTERN);
+            if (!match) return;
+
+            const id = normalizeId(match[0]);
+            upsertComplaint({ ...pendingSubmission, id, status: 'Pending' });
+            pendingSubmission = null;
+        }
+
+        // Snapshot values before the existing script.js may reset the form.
+        if (complaintForm) {
+            complaintForm.addEventListener('submit', function () {
+                pendingSubmission = snapshotComplaintForm();
+
+                window.setTimeout(function () {
+                    const sources = [
+                        document.getElementById('toastMessage')?.textContent,
+                        trackResult?.textContent,
+                        document.getElementById('complaintList')?.textContent
+                    ];
+                    for (const source of sources) captureGeneratedComplaintId(source);
+                }, 80);
+            }, true);
+        }
+
+        const observerTargets = [
+            document.getElementById('toastMessage'),
+            trackResult,
+            document.getElementById('complaintList')
+        ].filter(Boolean);
+
+        if (observerTargets.length) {
+            const observer = new MutationObserver(function (mutations) {
+                for (const mutation of mutations) {
+                    captureGeneratedComplaintId(mutation.target.textContent);
+                }
+            });
+            observerTargets.forEach(target => observer.observe(target, { childList: true, subtree: true, characterData: true }));
+        }
+
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function isResolved(status) {
+            return /^resolved$/i.test(String(status || '').trim());
+        }
+
+        function showFeedbackFor(complaint) {
+            if (!feedbackBox || !feedbackComplaintId) return;
+            if (complaint && isResolved(complaint.status)) {
+                feedbackBox.classList.remove('hidden');
+                feedbackComplaintId.value = complaint.id;
+            } else {
+                feedbackBox.classList.add('hidden');
+                feedbackComplaintId.value = '';
+                if (feedbackMessage) feedbackMessage.textContent = '';
+            }
+        }
+
+        function renderPersistentTracking(complaint) {
+            if (!trackResult || !complaint) return;
+            trackResult.innerHTML = `
+                <div class="track-result-card">
+                    <h3>Complaint ${escapeHtml(complaint.id)}</h3>
+                    <p><strong>Status:</strong> ${escapeHtml(complaint.status)}</p>
+                    ${complaint.category ? `<p><strong>Category:</strong> ${escapeHtml(complaint.category)}</p>` : ''}
+                    ${complaint.department ? `<p><strong>Department:</strong> ${escapeHtml(complaint.department)}</p>` : ''}
+                    ${complaint.description ? `<p><strong>Complaint:</strong> ${escapeHtml(complaint.description)}</p>` : ''}
+                </div>
+            `;
+        }
+
+        function runPersistentTracking() {
+            if (!complaintIdInput) return;
+            const id = normalizeId(complaintIdInput.value);
+            if (!id) {
+                showFeedbackFor(null);
+                return;
+            }
+
+            // Run after the original track handler. If the original data exists,
+            // synchronize its current status into our persistent copy.
+            window.setTimeout(function () {
+                let complaint = findComplaintAnywhere(id);
+
+                if (!complaint && trackResult) {
+                    const text = trackResult.textContent || '';
+                    const statusMatch = text.match(/status\\s*:?\\s*(pending|in progress|resolved|rejected)/i);
+                    if (text.toUpperCase().includes(id)) {
+                        complaint = { id, status: statusMatch ? statusMatch[1] : 'Pending' };
+                    }
+                }
+
+                if (complaint) {
+                    // Prefer a status currently rendered by the existing app.
+                    const currentText = trackResult?.textContent || '';
+                    const currentStatus = currentText.match(/status\\s*:?\\s*(pending|in progress|resolved|rejected)/i);
+                    if (currentStatus) complaint.status = currentStatus[1];
+
+                    upsertComplaint(complaint);
+
+                    // If the existing script did not render a result after reopening,
+                    // render the saved complaint ourselves.
+                    if (!currentText.toUpperCase().includes(id)) {
+                        renderPersistentTracking(complaint);
+                    }
+                    showFeedbackFor(complaint);
+                } else {
+                    showFeedbackFor(null);
+                }
+            }, 30);
+        }
+
+        if (trackButton) {
+            trackButton.addEventListener('click', runPersistentTracking);
+        }
+
+        if (complaintIdInput) {
+            complaintIdInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') runPersistentTracking();
+            });
+        }
+
+        // Feedback field: letters and spaces only, including paste/input cleanup.
+        if (resolvedFeedback) {
+            resolvedFeedback.addEventListener('input', function () {
+                const cleaned = this.value.replace(/[^A-Za-z ]/g, '');
+                if (this.value !== cleaned) this.value = cleaned;
+            });
+        }
+
+        if (feedbackForm) {
+            feedbackForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const id = normalizeId(feedbackComplaintId?.value);
+                const feedback = resolvedFeedback?.value.trim() || '';
+                const complaint = findComplaintAnywhere(id);
+
+                if (!complaint) {
+                    feedbackMessage.textContent = 'Complaint ID not found.';
+                    return;
+                }
+
+                if (!isResolved(complaint.status)) {
+                    feedbackMessage.textContent = 'Feedback can be submitted only after the complaint is resolved.';
+                    return;
+                }
+
+                if (!feedback || !/^[A-Za-z ]+$/.test(feedback)) {
+                    feedbackMessage.textContent = 'Please use letters and spaces only in your feedback.';
+                    return;
+                }
+
+                const entries = readJson(FEEDBACK_KEY, []);
+                const feedbackItems = Array.isArray(entries) ? entries : [];
+                const existingIndex = feedbackItems.findIndex(item => normalizeId(item.complaintId) === id);
+                const entry = { complaintId: id, feedback, submittedAt: new Date().toISOString() };
+
+                if (existingIndex >= 0) feedbackItems[existingIndex] = entry;
+                else feedbackItems.unshift(entry);
+
+                localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbackItems));
+                feedbackMessage.textContent = 'Thank you. Your feedback has been submitted.';
+                resolvedFeedback.value = '';
+            });
+        }
+    })();
+    </script>\n
+</body>
+</html>
